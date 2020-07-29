@@ -1,4 +1,4 @@
-- #Apply these settings via IPTABLES
+# Apply these settings via IPTABLES
 
 ##Block Invalid Packets
 - iptables -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
