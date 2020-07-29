@@ -26,7 +26,7 @@ This blocks all packets that are new (don’t belong to an established connectio
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP 
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP 
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
-The above ruleset blocks packets that use Fake TCP flags, ie. TCP flags that legitimate packets wouldn’t use.’
+The above ruleset blocks packets that use Fake TCP flags, ie. TCP flags that legitimate packets wouldn’t use.
 
 ##Block Packets From Private Subnets (Spoofing)
 - iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j DROP 
