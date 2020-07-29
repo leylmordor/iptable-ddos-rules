@@ -1,18 +1,18 @@
 - #Apply these settings via IPTABLES
 
-##Block Invalid Packets
+## Block Invalid Packets
 - iptables -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
 This rule blocks all packets that are not a SYN packet and don’t belong to an established TCP connection.
 
-##Block New Packets That Are Not SYN
+## Block New Packets That Are Not SYN
 - iptables -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
 This blocks all packets that are new (don’t belong to an established connection) and don’t use the SYN flag. 
 
-##Block Uncommon MSS Values
+## Block Uncommon MSS Values
 - iptables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
-- The above iptables rule blocks new packets (only SYN packets can be new packets as per the two previous rules) that use a TCP MSS value that is not common. 
+The above iptables rule blocks new packets (only SYN packets can be new packets as per the two previous rules) that use a TCP MSS value that is not common. 
  
-##Block Packets With Fake TCP Flags
+## Block Packets With Fake TCP Flags
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP 
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP 
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j DROP 
@@ -28,7 +28,7 @@ This blocks all packets that are new (don’t belong to an established connectio
 - iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
 The above ruleset blocks packets that use Fake TCP flags, ie. TCP flags that legitimate packets wouldn’t use.
 
-##Block Packets From Private Subnets (Spoofing)
+## Block Packets From Private Subnets (Spoofing)
 - iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j DROP 
 - iptables -t mangle -A PREROUTING -s 169.254.0.0/16 -j DROP 
 - iptables -t mangle -A PREROUTING -s 172.16.0.0/12 -j DROP 
@@ -39,7 +39,7 @@ The above ruleset blocks packets that use Fake TCP flags, ie. TCP flags that leg
 - iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j DROP 
 - iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
  
-##Additional Rules
+## Additional Rules
 - iptables -t mangle -A PREROUTING -p icmp -j DROP
 This drops all ICMP packets. 
 
@@ -56,11 +56,11 @@ This rule blocks fragmented packets. ]
 - iptables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT 
 - iptables -A INPUT -p tcp --tcp-flags RST RST -j DROP
  
-##SSH Bruteforce
+## SSH Bruteforce
 - iptables -A INPUT -p tcp --dport ssh -m conntrack --ctstate NEW -m recent --set 
 - iptables -A INPUT -p tcp --dport ssh -m conntrack --ctstate NEW -m recent --update --seconds 60 --hitcount 10 -j DROP  
 
-##Protection against port scanning
+## Protection against port scanning
 - iptables -N port-scanning 
 - iptables -A port-scanning -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s --limit-burst 2 -j RETURN 
 - iptables -A port-scanning -j DROP# iptable-ddos-rules
